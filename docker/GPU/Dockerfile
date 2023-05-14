@@ -1,9 +1,7 @@
-FROM nvcr.io/nvidia/tensorrt:22.04-py3
+FROM nvcr.io/nvidia/tensorrt:22.12-py3
 
-ARG CUDA=11.3
+ARG CUDA=11.8
 ARG PYTHON_VERSION=3.8
-ARG TORCH_VERSION=1.10.0
-ARG TORCHVISION_VERSION=0.11.0
 ARG ONNXRUNTIME_VERSION=1.8.1
 ARG PPLCV_VERSION=0.7.0
 ENV FORCE_CUDA="1"
@@ -45,8 +43,9 @@ RUN if [ ${USE_SRC_INSIDE} == true ] ; \
     fi
 
 ### install pytorch openmim
-RUN /opt/conda/bin/conda install pytorch==${TORCH_VERSION} torchvision==${TORCHVISION_VERSION} cudatoolkit=${CUDA} -c pytorch -c conda-forge -y \
-    && /opt/conda/bin/pip install --no-cache-dir openmim
+
+RUN /opt/conda/bin/conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+RUN /opt/conda/bin/conda --no-cache-dir openmim
 
 ### pytorch mmcv onnxruntime
 RUN /opt/conda/bin/mim install --no-cache-dir "mmcv"${MMCV_VERSION} onnxruntime-gpu==${ONNXRUNTIME_VERSION} mmengine${MMENGINE_VERSION}
